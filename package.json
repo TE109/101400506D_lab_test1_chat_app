@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/TE109/101400506D_lab_test1_chat_app#readme",
   "dependencies": {
+    "body-parser": "^1.20.3",
     "express": "^4.21.2",
     "mongoose": "^8.9.7",
     "socket.io": "^4.8.1"

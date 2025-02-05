@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <script>
+    const ioClient = io()
+    function SignUp() {
+        const username = document.getElementById("username").value;
+        const firstname = document.getElementById("firstname").value;
+        const lastname = document.getElementById("lastname").value;
+        const password = document.getElementById("password").value;
+        ioClient.emit('signUp', { username, firstname, lastname, password });
+}
+
+    </script>
+
+    <h1>Group Chat</h1>
+    <h4 id="socketID"></h4>
+    <input type="text" id="username" name="user" placeholder="Enter username" /><br />
+    <input type="text" id="firstname" name="first" placeholder="Enter Your first name" /><br />
+    <input type="text" id="lastname" name="last" placeholder="Enter Your last name" /><br />
+    <input type="text" id="password" name="password" placeholder="Enter Password" /><br />
+    <button onclick="SignUp()">Create User</button>
+</body>
+</html>
