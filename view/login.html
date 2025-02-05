@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <script>
+        const ioClient = io();
+
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            ioClient.emit("login", { username, password });
+        };
+
+        ioClient.on("loginResponse",(data) => {
+            localStorage.setItem("User", data.user)
+        })
+    </script>
+    
+    <h1>Login</h1>    
+    <input type="text" id="username" placeholder="Enter username" /><br />
+    <input type="password" id="password" placeholder="Enter password" /><br />
+    <button onclick="login()">Login</button>
+
+    
+</body>
+</html>

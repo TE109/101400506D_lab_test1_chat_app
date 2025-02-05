@@ -3,6 +3,7 @@ const http = require('http');
 const socketIO = require('socket.io');
 const mongoose = require('mongoose');
 const User = require('./Schemas/Users')
+const crypto = require('crypto');
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://admin:pass@comp3123cluster.arhm6.mongodb.net/comp3133_101400506_lab_Test?retryWrites=true&w=majority', {
@@ -37,22 +38,54 @@ io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
   // Listen for User Creation event 
-  socket.on('signUp', async (data) => {
-    try {      
-      const newUser = new User({
-        username: data.username,
-        firstname: data.firstname,
-        lastname: data.lastname,
-        password: data.password,
-      });
-      await newUser.save();
-      console.log("New user saved:", newUser);
+  /*
+  This Works by checking if no user exsists with that Username 
+  If their is no User create a new User
+  If their is a User thorw an Error 
+  */
+  socket.on('signUp', async (data) => {    
+    try {
+      if(User.find({username: data.username}) == null){
+        const newUser = new User({
+          username: data.username,
+          firstname: data.firstname,
+          lastname: data.lastname,
+          password: crypto.createHash('md5').update(data.password).digest('hex'),
+        });
+        await newUser.save();
+        console.log("New user saved:", newUser);
+      } else {
+        throw new Error("Username already in use")
+      }    
     } catch (error) {
       console.error("Error saving user:", error);
     }
-});
+  });
+  
+  // Listen for Login Function 
+  socket.on("login", async(data) => {
+    try {
+      const user = User.findOne(
+        {
+          username: data.username, 
+          password: crypto.createHash('md5').update(data.password).digest('hex')
+        })
 
-    // Listen for user disconnection
+      if(user != null) 
+        {
+          socket.emit("loginResponse", { user: {
+             username: user.username, 
+             firstname: user.firstname, 
+             lastname: user.lastname } });
+        } else {
+          throw new Error("Invalid User Credentials")
+        }
+    } catch (error) {
+      
+    }
+  })
+  
+  // Listen for user disconnection
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
