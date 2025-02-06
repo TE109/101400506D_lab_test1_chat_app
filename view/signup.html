@@ -4,27 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
+    
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
     <script>
-    const ioClient = io()
-    function SignUp() {
-        const username = document.getElementById("username").value;
-        const firstname = document.getElementById("firstname").value;
-        const lastname = document.getElementById("lastname").value;
-        const password = document.getElementById("password").value;
-        ioClient.emit('signUp', { username, firstname, lastname, password });
-}
+        const ioClient = io();
 
+        function SignUp() {
+            const username = document.getElementById("username").value;
+            const firstname = document.getElementById("firstname").value;
+            const lastname = document.getElementById("lastname").value;
+            const password = document.getElementById("password").value;
+
+            ioClient.emit('signUp', { username, firstname, lastname, password });
+        }
+
+        ioClient.on("loginResponse", (data) => {
+            const username = data.user.username;
+            localStorage.setItem("currentUser", JSON.stringify(data.user)); 
+            window.location.href = "/login";
+        });
+
+        ioClient.on('disconnect', () => {
+            localStorage.clear();
+         });;
     </script>
 
-    <h1>Group Chat</h1>
-    <h4 id="socketID"></h4>
-    <input type="text" id="username" name="user" placeholder="Enter username" /><br />
-    <input type="text" id="firstname" name="first" placeholder="Enter Your first name" /><br />
-    <input type="text" id="lastname" name="last" placeholder="Enter Your last name" /><br />
-    <input type="text" id="password" name="password" placeholder="Enter Password" /><br />
+    <h1>Signup</h1>
+    <input type="text" id="username" placeholder="Enter username" /><br />
+    <input type="text" id="firstname" placeholder="Enter your first name" /><br />
+    <input type="text" id="lastname" placeholder="Enter your last name" /><br />
+    <input type="password" id="password" placeholder="Enter password" /><br />
     <button onclick="SignUp()">Create User</button>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -17,9 +18,18 @@
             ioClient.emit("login", { username, password });
         };
 
-        ioClient.on("loginResponse",(data) => {
-            localStorage.setItem("User", data.user)
-        })
+        ioClient.on("loginResponse", (data) => {
+            const username = data.user.username;
+            localStorage.setItem(username, JSON.stringify(data.user)); 
+            window.location.href = "/group?user=" + encodeURIComponent(username); 
+
+
+})
+
+ioClient.on('disconnect', () => {
+            localStorage.clear();
+         });;
+
     </script>
     
     <h1>Login</h1>    
